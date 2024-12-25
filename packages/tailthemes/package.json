@@ -34,6 +34,10 @@
 		"email": "emma.jellemabutler@gmail.com",
 		"url": "https://www.emmalexandria.dev"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/emmalexandria/tailthemes"
+	},
 	"license": "MIT",
 	"peerDependencies": {
 		"tailwindcss": "^3.4.17"
