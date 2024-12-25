@@ -1,5 +1,5 @@
 import { Config } from "tailwindcss";
-import { InternalConfig, type TailwindTheme } from "./plugin"
+import { InternalConfig, TailthemesOptions, type TailwindTheme } from "./plugin"
 import Color from "color"
 
 type ParsedConfig = {
@@ -10,15 +10,6 @@ type ParsedConfig = {
 
 type Variants = Array<{ name: string; definition: string[] }>;
 type Utilities = { [selector: string]: Record<string, any> }
-
-function defaultCssVariable(themeName: string) {
-	return `--themewind-${themeName}`
-}
-
-function defaultThemeClass(themeName: string) {
-	return themeName;
-}
-
 
 export function flattenSubTheme(theme: TailwindTheme): { [key: string]: any } {
 	let flattened: { [key: string]: any } = {};
@@ -87,17 +78,6 @@ const generateVariants = (selector: string): string[] => {
 	];
 }
 
-
-const generateRootVariants = (themeName: string): string[] => {
-	const baseDefs = [
-		`:root&`,
-		`:is(:root > &:not([data-theme]))`,
-		`:is(:root &:not([data-theme] *):not([data-theme]))`
-	];
-
-	return baseDefs
-}
-
 const produceSafeName = (themeName: string): string => {
 	return themeName.trim().replace("\s+", "-").toLowerCase()
 }
@@ -123,14 +103,15 @@ function addColorsToTheme(config: ParsedConfig, colors: { [key: string]: string 
 	Object.assign(config.theme.colors, colorObj)
 }
 
-export const parseTailthemesConfig = <T extends Config["theme"]>(config: InternalConfig<T> = {}) => {
+export const parseTailthemesConfig = <T extends Config["theme"]>(config: InternalConfig<T> = {}, options?: TailthemesOptions) => {
 	const parsedConfig: ParsedConfig = {
 		variants: [],
 		utilities: {},
 		theme: {}
 	}
-
 	const entries = Object.entries(config)
+	const defaultTheme = options?.defaultTheme;
+
 	entries.forEach((e) => {
 		const themeName = e[0];
 		const theme = e[1];

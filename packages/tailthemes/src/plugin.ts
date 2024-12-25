@@ -9,8 +9,31 @@ export interface InternalConfig<T extends Config["theme"]> {
 	[key: string]: T
 }
 
-export const tailthemes = <T extends Config["theme"]>(config: InternalConfig<T>) => {
-	const parsedConfig = parseTailthemesConfig(config)
+const defaultProduceCssVariables = (name: string, key?: string) => {
+	if (key) {
+		return `--tailthemes-${key}-${name}`
+	}
+	return `--tailthemes-${name}`
+}
+
+const defaultProduceClassNames = (name: string) => {
+	return name
+}
+
+interface MediaQueryThemes {
+	dark?: string
+	light?: string
+	highContrast?: string
+}
+
+export type DefaultTheme = string | MediaQueryThemes
+
+export interface TailthemesOptions {
+	defaultTheme?: DefaultTheme
+}
+
+export const tailthemes = <T extends Config["theme"]>(config: InternalConfig<T>, options?: TailthemesOptions) => {
+	const parsedConfig = parseTailthemesConfig(config, options)
 
 	return plugin(
 		({ addUtilities, addVariant, addBase, addComponents, e, config }) => {

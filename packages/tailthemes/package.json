@@ -7,6 +7,9 @@
 		"watch": "tsup --watch",
 		"test": "vitest"
 	},
+	"files": [
+		"./dist"
+	],
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
