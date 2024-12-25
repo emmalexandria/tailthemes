@@ -45,7 +45,7 @@ Now, `primary` and the default value of `rounded` will switch depending on the a
 a class. 
 
 ```html
-<html data-class="light>
+<html data-theme="light>
 ```
 
 ### Schemas
