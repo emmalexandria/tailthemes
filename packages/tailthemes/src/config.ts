@@ -1,5 +1,5 @@
 import { Config } from "tailwindcss";
-import { InternalConfig, TailthemesOptions, type TailwindTheme } from "./plugin"
+import { InternalConfig, TailthemesOptions, type TailwindTheme, type CSSVariableGenerator, type ClassGenerator, ColorSchemes } from "./plugin"
 import Color from "color"
 
 type ParsedConfig = {
@@ -10,6 +10,23 @@ type ParsedConfig = {
 
 type Variants = Array<{ name: string; definition: string[] }>;
 type Utilities = { [selector: string]: Record<string, any> }
+
+const defaultCssGenerator: CSSVariableGenerator = (name, key) => {
+	if (key) {
+		return `--tailthemes-${key}-${name}`
+	}
+
+	return `--tailthemes-${name}`
+}
+
+const defaultClassGenerator: ClassGenerator = (name: string) => {
+	return name
+}
+
+export const defaultOptions: TailthemesOptions = {
+	cssGenerator: defaultCssGenerator,
+	classGenerator: defaultClassGenerator
+}
 
 export function flattenSubTheme(theme: TailwindTheme): { [key: string]: any } {
 	let flattened: { [key: string]: any } = {};
@@ -78,45 +95,78 @@ const generateVariants = (selector: string): string[] => {
 	];
 }
 
+const generateRootVariants = (scheme: ColorSchemes): string[] => {
+	const baseDefs = [
+		`:root&`,
+		`:is(:root > &:not([data-theme]))`,
+		`:is(:root &:not([data-theme] *):not([data-theme])`
+	]
+	if (scheme === "default") {
+		return baseDefs
+	}
+	if (scheme === "high-contrast") {
+		return baseDefs.map((d) => `@media (prefers-contrast: more){${d}}`)
+	}
+	if (scheme === "light") {
+		return baseDefs.map((d) => `@media (prefers-color-scheme: light){${d}}`)
+	}
+	if (scheme === "dark") {
+		return baseDefs.map((d) => `@media (prefers-color-scheme: dark){${d}}`)
+	}
+	return []
+}
+
+const addRootUtility = (utilities: Utilities, scheme: ColorSchemes, key: string, value: string) => {
+	if (scheme === 'default') {
+		if (!utilities[':root']) {
+			utilities[':root'] = {}
+		}
+		utilities[':root'][key] = value
+	}
+	if (scheme === "light") {
+		if (!utilities['@media (prefers-color-scheme: light)']) {
+			utilities['@media (prefers-color-scheme: light)'] = {
+				':root': {}
+			}
+		}
+
+		utilities['@media (prefers-color-scheme: light)'][':root'][key] = value
+	}
+	if (scheme === "dark") {
+		if (!utilities['@media (prefers-color-scheme: dark)']) {
+			utilities['@media (prefers-color-scheme: dark)'] = {
+				':root': {}
+			}
+		}
+
+		utilities['@media (prefers-color-scheme: dark)'][':root'][key] = value
+	}
+}
+
 const produceSafeName = (themeName: string): string => {
 	return themeName.trim().replace("\s+", "-").toLowerCase()
 }
 
-function addColorsToTheme(config: ParsedConfig, colors: { [key: string]: string }, selector: string, themeName: string) {
-	const { utilities, configColors } = createHslaVariables(colors, selector, themeName)
-	Object.entries(utilities).forEach(([k, v]) => {
-		config.utilities[k] = v
-	})
 
 
-	const colorObj: { [key: string]: string } = {}
-	Object.entries(configColors).forEach(([k, v]) => {
-		colorObj[k] = v
-	})
-
-	if (!config.theme) {
-		config.theme = {}
+export const parseTailthemesConfig = <T extends Config["theme"]>(config: InternalConfig<T> = {}, options?: Partial<TailthemesOptions>) => {
+	let fullOptions: TailthemesOptions;
+	if (!options) {
+		fullOptions = defaultOptions
+	} else {
+		fullOptions = { ...defaultOptions, ...options }
 	}
-	if (!config.theme.colors) {
-		config.theme.colors = {}
-	}
-	Object.assign(config.theme.colors, colorObj)
-}
-
-export const parseTailthemesConfig = <T extends Config["theme"]>(config: InternalConfig<T> = {}, options?: TailthemesOptions) => {
 	const parsedConfig: ParsedConfig = {
 		variants: [],
 		utilities: {},
 		theme: {}
 	}
 	const entries = Object.entries(config)
-	const defaultTheme = options?.defaultTheme;
 
 	entries.forEach((e) => {
 		const themeName = e[0];
 		const theme = e[1];
-
-		const themeClass = produceSafeName(themeName)
+		const themeClass = fullOptions.classGenerator(themeName)
 		const themeVariant = themeName
 
 		const flatSubTheme = flattenSubTheme(theme)
@@ -131,10 +181,13 @@ export const parseTailthemesConfig = <T extends Config["theme"]>(config: Interna
 		const selector = `.${themeClass},[data-theme="${themeName}"]`;
 		for (const key in flatSubTheme) {
 			if (key === "colors") {
-				addColorsToTheme(parsedConfig, flatSubTheme[key], selector, themeName)
+				addColorsToTheme(parsedConfig, fullOptions, flatSubTheme[key], selector, themeName, theme.colorScheme)
 			}
 			else {
-				const { utilities, subConfig } = createUtilitiesAndConfig(flatSubTheme[key], selector, key)
+				if (key === "colorScheme") {
+					continue
+				}
+				const { utilities, subConfig } = createUtilitiesAndConfig(fullOptions, flatSubTheme[key], selector, key)
 				Object.entries(utilities).forEach(([k, v]) => {
 					if (!parsedConfig.utilities[k]) {
 						parsedConfig.utilities[k] = {}
@@ -154,7 +207,28 @@ export const parseTailthemesConfig = <T extends Config["theme"]>(config: Interna
 	return parsedConfig
 }
 
-function createHslaVariables(colors: { [key: string]: string }, cssSelector: string, themeName: string): { utilities: Utilities, configColors: { [key: string]: string } } {
+function addColorsToTheme(config: ParsedConfig, options: TailthemesOptions, colors: { [key: string]: string }, selector: string, themeName: string, scheme: ColorSchemes | undefined) {
+	const { utilities, configColors } = createHslaVariables(options, colors, selector, themeName, scheme)
+	Object.entries(utilities).forEach(([k, v]) => {
+		config.utilities[k] = v
+	})
+
+
+	const colorObj: { [key: string]: string } = {}
+	Object.entries(configColors).forEach(([k, v]) => {
+		colorObj[k] = v
+	})
+
+	if (!config.theme) {
+		config.theme = {}
+	}
+	if (!config.theme.colors) {
+		config.theme.colors = {}
+	}
+	Object.assign(config.theme.colors, colorObj)
+}
+
+function createHslaVariables(options: TailthemesOptions, colors: { [key: string]: string }, cssSelector: string, themeName: string, scheme: ColorSchemes | undefined): { utilities: Utilities, configColors: { [key: string]: string } } {
 	const utilities: Utilities = {}
 	const configColors: { [key: string]: any } = {}
 	Object.entries(colors).forEach(([colorName, color]) => {
@@ -167,25 +241,28 @@ function createHslaVariables(colors: { [key: string]: string }, cssSelector: str
 		}
 
 
-		const colorVariable = `--themewind-${colorName}`;
+		const colorVariable = options.cssGenerator(colorName);
 
 		const hslValues = `${h} ${s}% ${l}%`
 		if (!utilities[cssSelector]) {
 			utilities[cssSelector] = {}
 		}
 		utilities[cssSelector][colorVariable] = hslValues
+		if (scheme) {
+			addRootUtility(utilities, scheme, colorVariable, hslValues)
+		}
 		configColors[colorName] = `hsl(var(${colorVariable}))`
 	})
 
 	return { utilities, configColors }
 }
 
-function createUtilitiesAndConfig(values: { [key: string]: string }, cssSelector: string, key: string): { utilities: Utilities, subConfig: { [key: string]: any } } {
+function createUtilitiesAndConfig(options: TailthemesOptions, values: { [key: string]: string }, cssSelector: string, key: string): { utilities: Utilities, subConfig: { [key: string]: any } } {
 	const utilities: Utilities = {}
 	const subConfig: { [key: string]: any } = {}
 
 	Object.entries(values).forEach(([valueName, value]) => {
-		const variable = `--themewind-${key}-${valueName}`
+		const variable = options.cssGenerator(valueName, key)
 		if (!utilities[cssSelector]) {
 			utilities[cssSelector] = {}
 		}

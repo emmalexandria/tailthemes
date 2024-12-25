@@ -78,14 +78,29 @@ test("Test parsing config", () => {
 	})).toEqual({})
 })
 
-test("Parsing config with no colors", () => {
+test("Test parsing config with defaults", () => {
 	expect(parseTailthemesConfig({
-		default: {
-			fontFamily: {
-				display: "Inter Variable",
-				body: "Inter Variable"
-			}
+		hello: {
+			colors: {
+				red: {
+					500: "#ff0000"
+				},
+				green: "#00ff00"
+			},
+			borderRadius: {
+				sm: '1px'
+			},
+			colorScheme: 'default'
+		},
+		test: {
+			colors: {
+				test: "#f3df31",
+			},
+			borderRadius: {
+				lg: '2px'
+			},
+			colorScheme: 'light'
 		}
 	})).toEqual({})
-
 })
+
