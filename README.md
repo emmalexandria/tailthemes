@@ -63,9 +63,9 @@ interface Schema extends TailthemesSchema {
       base: string,
       text: string
     },
-    borderRadius: {
-      DEFAULT: string
-    }
+  }
+  borderRadius: {
+    DEFAULT: string
   }
 }
 ```
