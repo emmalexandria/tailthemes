@@ -90,7 +90,7 @@ test("Test parsing config with defaults", () => {
 			borderRadius: {
 				sm: '1px'
 			},
-			colorScheme: 'default'
+			colorScheme: 'dark'
 		},
 		test: {
 			colors: {

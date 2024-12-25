@@ -95,7 +95,10 @@ const generateVariants = (selector: string): string[] => {
 	];
 }
 
-const generateRootVariants = (scheme: ColorSchemes): string[] => {
+const generateRootVariants = (scheme: ColorSchemes | undefined): string[] => {
+	if (!scheme) {
+		return []
+	}
 	const baseDefs = [
 		`:root&`,
 		`:is(:root > &:not([data-theme]))`,
@@ -143,12 +146,6 @@ const addRootUtility = (utilities: Utilities, scheme: ColorSchemes, key: string,
 	}
 }
 
-const produceSafeName = (themeName: string): string => {
-	return themeName.trim().replace("\s+", "-").toLowerCase()
-}
-
-
-
 export const parseTailthemesConfig = <T extends Config["theme"]>(config: InternalConfig<T> = {}, options?: Partial<TailthemesOptions>) => {
 	let fullOptions: TailthemesOptions;
 	if (!options) {
@@ -162,7 +159,6 @@ export const parseTailthemesConfig = <T extends Config["theme"]>(config: Interna
 		theme: {}
 	}
 	const entries = Object.entries(config)
-
 	entries.forEach((e) => {
 		const themeName = e[0];
 		const theme = e[1];
@@ -175,7 +171,8 @@ export const parseTailthemesConfig = <T extends Config["theme"]>(config: Interna
 			name: themeVariant,
 			definition: [
 				generateVariants(`.${themeClass}`),
-				generateVariants(`[data-theme=${themeName}]`)
+				generateVariants(`[data-theme=${themeName}]`),
+				generateRootVariants(theme.colorScheme)
 			].flat()
 		})
 		const selector = `.${themeClass},[data-theme="${themeName}"]`;
@@ -187,13 +184,8 @@ export const parseTailthemesConfig = <T extends Config["theme"]>(config: Interna
 				if (key === "colorScheme") {
 					continue
 				}
-				const { utilities, subConfig } = createUtilitiesAndConfig(fullOptions, flatSubTheme[key], selector, key)
-				Object.entries(utilities).forEach(([k, v]) => {
-					if (!parsedConfig.utilities[k]) {
-						parsedConfig.utilities[k] = {}
-					}
-					Object.assign(parsedConfig.utilities[k], v)
-				})
+				const subConfig = createUtilitiesAndConfig(parsedConfig.utilities, fullOptions, flatSubTheme[key], selector, key, theme.colorScheme)
+
 				if (!parsedConfig.theme) {
 					parsedConfig.theme = {}
 				}
@@ -257,8 +249,7 @@ function createHslaVariables(options: TailthemesOptions, colors: { [key: string]
 	return { utilities, configColors }
 }
 
-function createUtilitiesAndConfig(options: TailthemesOptions, values: { [key: string]: string }, cssSelector: string, key: string): { utilities: Utilities, subConfig: { [key: string]: any } } {
-	const utilities: Utilities = {}
+function createUtilitiesAndConfig(utilities: Utilities, options: TailthemesOptions, values: { [key: string]: string }, cssSelector: string, key: string, scheme: ColorSchemes | undefined): { [key: string]: any } {
 	const subConfig: { [key: string]: any } = {}
 
 	Object.entries(values).forEach(([valueName, value]) => {
@@ -266,11 +257,15 @@ function createUtilitiesAndConfig(options: TailthemesOptions, values: { [key: st
 		if (!utilities[cssSelector]) {
 			utilities[cssSelector] = {}
 		}
+
 		utilities[cssSelector][variable] = value
+		if (scheme) {
+			addRootUtility(utilities, scheme, variable, value)
+		}
 		subConfig[valueName] = `var(${variable})`
 	})
 
-	return { utilities, subConfig }
+	return subConfig
 }
 
 
