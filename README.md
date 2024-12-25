@@ -48,6 +48,40 @@ a class.
 <html data-class="light>
 ```
 
+### Schemas
+
+Schemas allow you to define the variables which each theme *must* include.
+
+Define a schema type as follows:
+
+```typescript
+import { type TailthemesSchema } from "tailschemes";
+
+interface Schema extends TailthemesSchema {
+  colors: {
+    mono: {
+      base: string,
+      text: string
+    },
+    borderRadius: {
+      DEFAULT: string
+    }
+  }
+}
+```
+
+and call `tailthemes` with a generic argument:
+
+```typescript
+tailthemes<Schema>({
+  light: {
+
+  }
+})
+```
+
+The above code will give you an error, as light is now expected to implement the mono base and text colors, as well as a default border radius.
+
 ### Light, dark, and high-contrast themes
 
 To add a light or dark theme, simply append `colorScheme` to the theme:
