@@ -5,12 +5,6 @@ be themed, from colours to border radius to stroke width.
 
 *Note: Some of this project is shamelessly stolen from the similar [tw-colors](https://github.com/L-Blondy/tw-colors)*
 
-## Features
-
-- **Typed** — Create a schema for your themes to ensure they all implement the same variables, and get full intellisense while writing them.
-- **Easy** — No need to change your markup, tailthemes extends your existing configuration.
-- **Flexible** — Import your theme from any part of your app, making it effortless to sync your theme switcher component and your configuration.
-
 ## Usage
 
 Start by installing tailthemes:
