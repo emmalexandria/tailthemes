@@ -1,0 +1,15 @@
+---
+import ThemeSwitcher from "./ThemeSwitcher.svelte"
+import { Icon } from "astro-icon/components"
+---
+
+<div class="flex flex-row items-center px-8 py-4 shadow-md">
+	<h1 class="text-3xl mr-auto font-bold text-primary-500">
+		Tailthemes
+	</h1>
+	<a>
+		<Icon name="fa6-brands:github" />
+	</a>
+	<ThemeSwitcher client:load/>
+</div>
+
