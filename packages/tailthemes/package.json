@@ -17,9 +17,17 @@
 			"require": "./dist/index.js"
 		}
 	},
-	"keywords": [],
+	"keywords": [
+		"tailwind",
+		"tailwindcss",
+		"plugin",
+		"colors",
+		"themes",
+		"theme",
+		"tailwind-plugin"
+	],
 	"author": "",
-	"license": "ISC",
+	"license": "MIT",
 	"peerDependencies": {
 		"tailwindcss": "^3.4.17"
 	},
