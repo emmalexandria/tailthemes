@@ -10,6 +10,9 @@
 	"files": [
 		"./dist"
 	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
@@ -26,7 +29,11 @@
 		"theme",
 		"tailwind-plugin"
 	],
-	"author": "",
+	"author": {
+		"name": "Emma Alexandria",
+		"email": "emma.jellemabutler@gmail.com",
+		"url": "https://www.emmalexandria.dev"
+	},
 	"license": "MIT",
 	"peerDependencies": {
 		"tailwindcss": "^3.4.17"
