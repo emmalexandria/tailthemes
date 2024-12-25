@@ -3,6 +3,8 @@
 Tailthemes is a fully typed TailwindCSS plugin making it effortless to switch between themes in TailwindCSS. Any part of the configuration can 
 be themed, from colours to border radius to stroke width.
 
+*Note: Some of this project is shamelessly stolen from the similar [tw-colors](https://github.com/L-Blondy/tw-colors)*
+
 ## Features
 
 - **Typed** — Create a schema for your themes to ensure they all implement the same variables, and get full intellisense while writing them.
@@ -11,35 +13,79 @@ be themed, from colours to border radius to stroke width.
 
 ## Usage
 
-### Basic
+Start by installing tailthemes:
+```
+npm install tailthemes
+```
 
-```ts
-//tailwind.config.ts
+*tailwind.config.ts*
+```diff
+
 import { type Config } from "tailwindcss"
-import { tailthemes, type TailthemesConfig } from "tailthemes
++ import { tailthemes, type TailthemesConfig } from "tailthemes
 
 export default {
   content: ["./src/**/*.{html,js}"],
-  plugins: [tailthemes({
-    forest: {
-      colors: {
-        primary: "#00ff00"
-      },
-      borderRadius: {
-        DEFAULT: "0.5rem"
-      }
-    }
-    old: {
-      colors: {
-        primary: "#ea6a25"
-      },
-      borderRadius: {
-        DEFAULT: "0.25rem"
-      }
-    }
-  } satisfies TailthemesConfig)]
-} satisfies Config
+-  theme: {
+-   extend: {
+-      colors: {
+-        primary: "#ea6a25"
+-      }
+-    }
+-  }
+
++  plugins: [tailthemes({
++    light: {
++      colors: {
++        primary: "#ea6a25"
++      },
++      borderRadius: {
++        DEFAULT: "0.25rem"
++      }
++    }
++  } satisfies TailthemesConfig )]
++} satisfies Config
 ```
 
 Now, `primary` and the default value of `rounded` will switch depending on the active theme. The active theme can be set with `data-theme` or
 a class. 
+
+```html
+<html data-class="light>
+```
+
+### Light, dark, and high-contrast themes
+
+To add a light or dark theme, simply append `colorScheme` to the theme:
+```diff
+ light: {
+   colors: {
+     primary: "#ea6a25"
+   },
+   borderRadius: {
+     DEFAULT: "0.25rem"
+   },
++  colorScheme: "dark"
+ }
+```
+
+Valid values are `"dark"`, `"light"`, and `"high-contrast"` and `"default"`. The first three will generate styles based on media queries. `"default"` generates `:root` variables.
+
+### CSS variables and classnames
+
+The second (optional) argument of the `tailthemes` plugin function is an object containing `cssGenerator` and `classGenerator`, which are functions responsible for generating the CSS variables and classnames used by the plugin. 
+
+The following are default:
+```typescript
+//Here, key is the theme key (e.g. borderRadius) and name is the name of the value (e.g. red-500)
+const defaultCssGenerator = (name: string, key: string | undefined) => {
+  if(key) {
+    return `--tailthemes-${key}-${name}`;
+  }
+
+  return `--tailthemes-${name}`;
+}
+
+//Here, name is the name of the theme as defined in your tailthemes config
+const defaultClassGenerator = (name: string) => name
+```
