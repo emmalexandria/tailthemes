@@ -40,25 +40,6 @@ export function flattenSubTheme(theme: TailwindTheme): { [key: string]: any } {
 }
 
 
-export function flattenTheme(theme: TailwindTheme): { [key: string]: any } {
-	let flattened: { [key: string]: any } = {}
-	//Iterate through each theme in the theme config
-	for (const field in theme) {
-		for (const subfield in theme[field]) {
-			const entry: { [key: string]: any } = {};
-			entry[field] = theme[field][subfield]
-			const flattenedEntry = flattenObject(entry);
-			Object.entries(flattenedEntry).forEach(([k, v]) => {
-				if (!flattened[subfield]) {
-					flattened[subfield] = {}
-				}
-				flattened[subfield][k] = v
-			})
-		}
-	}
-	return flattened
-}
-
 export function flattenObject(theme: { [key: string]: string }): { [key: string]: string } {
 	const flattened: { [key: string]: string } = {}
 	for (const field in theme) {
