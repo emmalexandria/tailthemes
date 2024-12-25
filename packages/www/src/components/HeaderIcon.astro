@@ -1,0 +1,14 @@
+---
+import {Icon} from "astro-icon/components";
+
+interface Props {
+	name: string
+	linkName: string,
+	href: string
+}
+
+const {name, href, linkName} = Astro.props
+---
+<a {href} name={linkName} target="_blank" class="text-mono-text-light hover:text-primary-500">
+	<Icon {name} size={24}/>
+</a>

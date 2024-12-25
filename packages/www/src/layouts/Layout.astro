@@ -1,10 +1,15 @@
 ---
 import "@fontsource-variable/inter"
+import "@fontsource-variable/playfair-display"
+import '@fontsource-variable/overpass-mono'
+import "@fontsource-variable/open-sans"
 import Header from "../components/Header.astro"
+
+import "../styles/index.css"
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth h-full" >
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -12,29 +17,25 @@ import Header from "../components/Header.astro"
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro Basics</title>
 	</head>
-	<body class="font-body bg-mono-50 text-mono-950">
+	<body class="font-body h-full transition-all bg-mono-base text-mono-text">
 		<header>
 			<Header/>
 		</header>
-		<main>
+		<main >
 			<slot />
 		</main>
+		<footer class="bg-primary-500 text-mono-base p-4">
+			<p class="italic text-sm">This is a certified <a>Emma Alexandria</a> product. Terms and conditions don't apply.</p>
+		</footer>
 	</body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+
 </style>
 
 <script>
 import {themes, initTheme} from "../lib/themes"
 
-themes.forEach((t) => {
-	initTheme(t)
-})
+themes.forEach(t => initTheme(t))
 </script>

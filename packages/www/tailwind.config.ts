@@ -1,27 +1,54 @@
-import { tailthemes, type TailthemesConfig } from "tailthemes";
+import { tailthemes, type TailthemesConfig, type TailthemesSchema } from "tailthemes";
 import { type Config } from "tailwindcss";
 import typography from "@tailwindcss/typography";
+
+interface Schema extends TailthemesSchema {
+	colors: {
+		mono: {
+			base: string,
+			'text-light': string,
+			border: string
+			text: string
+		},
+		primary: {
+			50: string,
+			100: string,
+			200: string,
+			300: string,
+			400: string,
+			500: string,
+			600: string,
+			700: string,
+			800: string,
+			900: string,
+			950: string
+		}
+	},
+	fontFamily: {
+		display: string,
+		body: string
+	},
+	borderRadius: {
+		DEFAULT: string
+	},
+	borderWidth: {
+		DEFAULT: string
+	}
+}
 
 export default {
 	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
 	theme: {
 		extend: {},
 	},
-	plugins: [tailthemes({
+	plugins: [tailthemes<Schema>({
 		default: {
 			colors: {
 				mono: {
-					'50': '#f7f7f9',
-					'100': '#eaeaef',
-					'200': '#dadae3',
-					'300': '#c0c1d0',
-					'400': '#a2a2b8',
-					'500': '#8d8ba6',
-					'600': '#7d7a96',
-					'700': '#726d88',
-					'800': '#605c71',
-					'900': '#4f4c5c',
-					'950': '#33313a',
+					base: '#f7f7f9',
+					'text-light': '#726d88',
+					border: "#8d8ba6",
+					text: '#33313a',
 				},
 				primary: {
 					'50': '#f0faff',
@@ -40,22 +67,21 @@ export default {
 			fontFamily: {
 				display: "Inter Variable",
 				body: "Inter Variable"
-			}
+			},
+			borderRadius: {
+				DEFAULT: '0.5rem'
+			},
+			borderWidth: {
+				DEFAULT: '1px'
+			},
 		},
 		old: {
 			colors: {
 				mono: {
-					'50': '#f9f8f4',
-					'100': '#f0eee4',
-					'200': '#e0dbc8',
-					'300': '#cdc3a4',
-					'400': '#b8a77f',
-					'500': '#a99166',
-					'600': '#9c815a',
-					'700': '#82694c',
-					'800': '#6a5642',
-					'900': '#574737',
-					'950': '#2e241c',
+					base: '#f9f8f4',
+					text: '#2e241c',
+					border: '#b8a77f',
+					'text-light': "#82694c"
 				},
 				primary: {
 					'50': '#fef6ee',
@@ -72,9 +98,49 @@ export default {
 				},
 			},
 			fontFamily: {
-				display: "Playfair Display",
-				body: "Playfair Display"
+				display: "Playfair Display Variable",
+				body: "Open Sans Variable"
+			},
+			borderRadius: {
+				DEFAULT: '0.25rem'
+			},
+			borderWidth: {
+				DEFAULT: "2px"
 			}
+		},
+		terminal: {
+			colors: {
+				mono: {
+					text: '#f6f6f6',
+					'text-light': "#b0b0b0",
+					border: '#f6f6f6',
+					base: '#121212',
+				},
+				primary: {
+					'50': '#f1fcf1',
+					'100': '#defae0',
+					'200': '#c0f2c2',
+					'300': '#8ee793',
+					'400': '#55d35d',
+					'500': '#2fb838',
+					'600': '#219929',
+					'700': '#1d7824',
+					'800': '#1c5f21',
+					'900': '#194e1e',
+					'950': '#082b0c',
+
+				}
+			},
+			fontFamily: {
+				body: 'Overpass Mono Variable',
+				display: 'Overpass Mono Variable'
+			},
+			borderRadius: {
+				DEFAULT: '0px'
+			},
+			borderWidth: {
+				DEFAULT: '1px'
+			},
 		}
 	} satisfies TailthemesConfig), typography],
 } satisfies Config

@@ -15,19 +15,40 @@ const old: Theme = {
 	name: "old",
 }
 
-export const themes = [defaultTheme, old]
+const terminal: Theme = {
+	displayName: "Terminal",
+	name: "terminal"
+}
 
-export const initTheme = (theme: Theme) => {
-	if (localStorage.getItem("theme") === theme.name) {
-		setThemeActive(theme)
+export const themes = [defaultTheme, old, terminal]
+
+export const initTheme = (t: Theme) => {
+	if (getActiveTheme() === t) {
+		setThemeActive(t)
 	}
-	else if (theme.default === true) {
-		setThemeActive(theme)
+}
+
+export const getActiveTheme = (): Theme => {
+	if (!import.meta.env.SSR) {
+		if (localStorage.getItem("theme")) {
+			const local = localStorage.getItem("theme");
+			const theme = themes.find(t => t.name === local)
+			if (theme) {
+				return theme
+			}
+		}
+		const el = document.documentElement
+		const attr = el.getAttribute("data-theme")
+		const theme = themes.find(t => t.name === attr)
+		if (theme) {
+			return theme
+		}
 	}
+	return themes.find(t => t.default ?? false) ?? themes[0]
 }
 
 export const setThemeActive = (theme: Theme) => {
 	const el = document.documentElement;
-	el.removeAttribute("data-theme");
 	el.setAttribute("data-theme", theme.name)
+	localStorage.setItem("theme", theme.name)
 }

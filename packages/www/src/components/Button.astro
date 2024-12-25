@@ -1,0 +1,13 @@
+---
+interface Props {
+	href: string
+	primary?: boolean
+	target?: "_self" | "_blank"
+}
+
+const {href, primary=false, target = "_blank"} = Astro.props
+---
+
+<a {href} {target} class="px-4 py-2 rounded flex flex-row gap-2 items-center" class:list={{ "bg-primary-500 hover:bg-primary-600 text-mono-base": primary, "bg-mono-base transition-all border hover:bg-mono-text border-mono-border hover:border-mono-text hover:text-mono-base": !primary}}>
+	<slot/>
+</a>

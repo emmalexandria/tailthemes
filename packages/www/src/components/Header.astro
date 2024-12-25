@@ -1,15 +1,17 @@
 ---
+import HeaderIcon from "./HeaderIcon.astro"
 import ThemeSwitcher from "./ThemeSwitcher.svelte"
 import { Icon } from "astro-icon/components"
 ---
 
-<div class="flex flex-row items-center px-8 py-4 shadow-md">
-	<h1 class="text-3xl mr-auto font-bold text-primary-500">
+<div class="flex flex-row gap-4 items-center p-8 ">
+	<h1 class="text-xl font-display font-bold text-primary-500">
 		Tailthemes
 	</h1>
-	<a>
-		<Icon name="fa6-brands:github" />
-	</a>
+	<div class="flex flex-row gap-4 mr-auto">
+		<HeaderIcon name="fa6-brands:github" href="https://github.com/emmalexandria/tailthemes" linkName="Link to github"/>	
+		<HeaderIcon name="fa6-brands:npm" href="https://github.com/emmalexandria/tailthemes" linkName="Link to github"/>	
+	</div>
 	<ThemeSwitcher client:load/>
 </div>
 

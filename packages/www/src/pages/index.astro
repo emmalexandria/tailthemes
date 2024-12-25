@@ -1,12 +1,47 @@
 ---
+import { Icon } from 'astro-icon/components';
+import Button from '../components/Button.astro';
 import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import { Code } from 'astro:components';
+import {Content as UsageContent} from "./usage.md"
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<div class="flex flex-col items-center text-center">
-		<h1 class="text-5xl font-bold text-primary-500">Tailthemes</h1>
+	<div class="h-full text-center">
+		<div class="flex flex-col justify-center h-screen -mt-16 mx-auto w-1/2 items-center text-center ">
+			<h1 class="font-display text-5xl font-semibold text-mono-text mb-4">Theme <span class="font-bold text-primary-500">every</span> part of your Tailwind app</h1>
+			<p>Tailthemes allows you to dynamically change any value of your Tailwind theme.</p>
+
+			<div class="flex flex-row gap-4 mt-8">
+					<Button primary href="https://github.com/emmalexandria/tailthemes">
+					Star it on GitHub
+				</Button>
+				<Button target="_self" href="#typescript-heading">
+					Read more
+					<Icon name="lucide:arrow-down"/>
+				</Button>
+			</div>
+		</div>
+		<div class="bg-primary-500 text-mono-base grid gap-4 p-8  grid-cols-3">
+			<Card title="Typed" icon="devicon-plain:typescript">
+				Get intellisense as you configure your themes. Define
+				a schema for your themes to  ensure each one implements the same variables.
+			</Card>
+			<Card title="Easy" icon="lucide:book-open">
+				Configuration is identical to Tailwind. Only add features as you need them. Types ensure you 
+				don't make errors.
+			</Card>
+			<Card title="Flexible" icon="lucide:brain">
+				Import your configuration anywhere in your app, making it easy to synchronise theme-switchers and 
+				your configuration.
+			</Card>
+		</div>
+		<div class="mt-8 w-1/2 mx-auto text-left">
+			<UsageContent/>
+		</div>
 	</div>
 </Layout>
