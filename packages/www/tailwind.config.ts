@@ -74,13 +74,14 @@ export default {
 			borderWidth: {
 				DEFAULT: '1px'
 			},
+			colorScheme: 'light'
 		},
-		old: {
+		typewriter: {
 			colors: {
 				mono: {
 					base: '#f9f8f4',
 					text: '#2e241c',
-					border: '#b8a77f',
+					border: '#cdc3a4',
 					'text-light': "#82694c"
 				},
 				primary: {
@@ -141,6 +142,41 @@ export default {
 			borderWidth: {
 				DEFAULT: '1px'
 			},
+			colorScheme: 'dark',
+		},
+		pastel: {
+			colors: {
+				mono: {
+					base: '#f9f6f9',
+					text: "#34232e",
+					"text-light": "#966c89",
+					border: "#dac7d5"
+				},
+				primary: {
+					'50': '#fcf3fa',
+					'100': '#fae9f7',
+					'200': '#f6d4ee',
+					'300': '#eda1da',
+					'400': '#e680ca',
+					'500': '#da5ab3',
+					'600': '#c73b96',
+					'700': '#ac2a7b',
+					'800': '#8e2666',
+					'900': '#772456',
+					'950': '#480f32',
+				},
+			},
+			borderRadius: {
+				DEFAULT: "1rem"
+			},
+			borderWidth: {
+				DEFAULT: "1px"
+			},
+			fontFamily: {
+				display: "Platypi Variable",
+				body: "Playpen Sans Variable"
+			}
 		}
-	} satisfies TailthemesConfig), typography],
+	} satisfies TailthemesConfig, {
+	}), typography],
 } satisfies Config

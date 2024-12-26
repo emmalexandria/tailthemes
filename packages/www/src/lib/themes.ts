@@ -10,9 +10,9 @@ const defaultTheme: Theme = {
 	default: true
 }
 
-const old: Theme = {
-	displayName: "Old Fashioned",
-	name: "old",
+const typewriter: Theme = {
+	displayName: "Typewriter",
+	name: "typewriter",
 }
 
 const terminal: Theme = {
@@ -20,7 +20,12 @@ const terminal: Theme = {
 	name: "terminal"
 }
 
-export const themes = [defaultTheme, old, terminal]
+const pink: Theme = {
+	displayName: "Pink",
+	name: "pastel"
+}
+
+export const themes = [defaultTheme, typewriter, terminal, pink]
 
 export const initTheme = (t: Theme) => {
 	if (getActiveTheme() === t) {
